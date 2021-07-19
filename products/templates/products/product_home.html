@@ -1,0 +1,82 @@
+{% extends "products/base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="row text-center text-white mb-5">
+        <div class="col-lg-7 mx-auto">
+            <h1 class="display-4">Product List</h1>
+        </div>
+    </div>
+
+    <form>
+        <div class = "form-group">
+            <input type = "text" placeholder = "Search" id = "search">
+        </div>    
+    </form>
+
+        <!-- List group-->
+        <ul class="list-group shadow row">
+            <div class = "row">
+{% for product in products %}
+
+            <!-- list group item-->
+            <li class="list-group-item col-sm-6 ">
+                <!-- Custom content-->
+                <div class="media align-items-lg-center flex-column flex-lg-row p-3">
+                    <div class="media-body order-2 order-lg-1">
+                        <h5 class="mt-0 font-weight-bold mb-2 prod-title">{{product.title}}</h5>
+                        <p class="font-italic text-muted mb-0 small">{{product.description}}</p>
+                        <div class="d-flex align-items-center justify-content-between mt-1">
+                            <h6 class="font-weight-bold my-2">₹{{product.price}}</h6>
+                        </div>
+                    </div> <img src= "{{product.image.url}}" alt="Generic placeholder image" width="200" class="ml-lg-5 order-1 order-lg-2">
+                </div> <!-- End -->
+
+                <form method = "POST" action = "/AddCart/{{product.id}}">
+                    {% csrf_token %}
+                    <select name="quantity" id="quantity">
+                        {% for i in '123456789'|make_list %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <button class = "btn-primary" type = "submit">ORDER</button>
+                    </form>
+                    
+                    <form method = "POST" action = "/RemoveCart/{{product.id}}">
+                        {% csrf_token %}
+                        {% for item in cart %}
+                            {% if item.product == product %}                                
+                                <h6> Current Quantity {{item.quantity}}</h6>
+                                <button type = "submit">REMOVE</button>
+                            {% endif %}
+                        {% endfor %}
+                    </form>
+            </li> <!-- End -->
+{% endfor %}
+</div>
+</ul>
+</div>
+
+{% if is_paginated %}
+{% if page_obj.has_previous %}
+  <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+  <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+{% endif %}
+
+{% for num in page_obj.paginator.page_range %}
+  {% if page_obj.number == num %}
+    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+  {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+  {% endif %}
+{% endfor %}
+
+{% if page_obj.has_next %}
+  <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+  <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+{% endif %}
+
+{% endif %}
+
+{% endblock content %}

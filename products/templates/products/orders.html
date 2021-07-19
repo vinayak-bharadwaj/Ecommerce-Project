@@ -1,0 +1,27 @@
+{% extends "products/base.html" %}
+
+{% block content %}
+
+
+<ul class = "list-group">
+    {% for order in orders %}
+    <li class = "list-group-item">
+        <caption class = "font-weight-bold">ORDER ID : {{order.id}} &emsp; &emsp; &emsp; &emsp; ORDER TIME : {{order.order_time}} &emsp; &emsp; &emsp; &emsp;
+            {% if order.transaction %}TRANSACTION ID : {{order.transaction.order_id}} {% endif %}
+        </caption>
+        <table class="table">
+            <tr>
+                <th scope = "col">PRODUCT</th>
+                <th scope = "col">PRICE(₹)</th>
+                <th scope = "col">QUANTITY</th>
+            </tr>
+        {% for item in order.items.all %}
+        <tr> <td>{{item.product.title}}</td>    <td>{{item.product.price}}</td>      <td>{{item.quantity}} </td></tr>
+        {% endfor %}
+        <tr><th>Total</th>  <th>{{order.amount}}</th><td></td></tr>
+        </table>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}
